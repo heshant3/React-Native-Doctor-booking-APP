@@ -19,8 +19,8 @@ const Home = () => {
     onValue(appointmentsRef, snapshot => {
       const data = snapshot.val();
       if (data) {
-        const tomorrow = new Date().toISOString().split('T')[24];
-        const today = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
+        const today = new Date().toISOString().split('T')[0];
+        const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
           .toISOString()
           .split('T')[0];
 

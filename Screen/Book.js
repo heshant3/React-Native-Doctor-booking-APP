@@ -7,20 +7,25 @@ import {
 } from 'react-native-responsive-screen';
 import DatePicker from 'react-native-date-picker';
 import {Button} from '@rneui/themed';
-import {ref, set} from 'firebase/database';
+import {ref, push, set} from 'firebase/database';
 import {db} from '../config';
 
 const Book = () => {
   const [date, setDate] = useState(new Date());
+  const [name1, setname1] = useState('');
   const [name, setname] = useState('');
   const [description, setdescription] = useState('');
 
-  function create() {
+  async function create() {
     const dateString = date.toISOString();
     const dateOnly = dateString.split('T')[0];
     const timeOnly = dateString.split('T')[1].substring(0, 8);
 
-    set(ref(db, 'users/' + name), {
+    // Use push to automatically generate a unique numerical ID
+    const newAppointmentRef = push(ref(db, 'users'));
+
+    set(newAppointmentRef, {
+      name1: newAppointmentRef.key, // Use the automatically generated key as the name
       name: name,
       description: description,
       date: dateOnly,
@@ -28,23 +33,21 @@ const Book = () => {
       check: '1',
     })
       .then(() => {
-        // console.log('Document successfully written!');
+        Vibration.vibrate(100);
         setname('');
         setdescription('');
         setDate(new Date());
       })
       .catch(error => {
-        // console.error('Error writing document: ', error);
+        console.error('Error writing document: ', error);
       });
   }
 
-  // Vibrate when date changes
   const onDateChange = newDate => {
-    Vibration.vibrate(100); // Vibrate when date changes
+    Vibration.vibrate(50);
     setDate(newDate);
   };
 
-  // Check if the "Book Now" button should be enabled
   const isButtonDisabled = !name;
 
   return (
@@ -78,7 +81,6 @@ const Book = () => {
             alignSelf="center"
             date={date}
             onDateChange={onDateChange}
-            // onDateChange={onDateChange} // Use the updated onDateChange function
             mode="datetime"
           />
           <Button
@@ -86,7 +88,7 @@ const Book = () => {
             title="Book Now"
             titleStyle={styles.btntitle}
             buttonStyle={styles.btn}
-            disabled={isButtonDisabled} // Set the disabled prop based on the condition
+            disabled={isButtonDisabled}
           />
         </View>
       </View>

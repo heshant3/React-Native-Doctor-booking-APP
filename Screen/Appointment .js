@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Modal,
   TouchableHighlight,
+  Vibration,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
@@ -15,7 +16,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {Icon} from '@rneui/themed';
-import {ref, onValue, update, get} from 'firebase/database';
+import {ref, onValue, update, get, remove} from 'firebase/database';
 import {db} from '../config';
 import DatePicker from 'react-native-date-picker';
 
@@ -26,7 +27,9 @@ const Appointment = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [deletedAppointment, setDeletedAppointment] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible1, setModalVisible1] = useState(false);
 
   useEffect(() => {
     const appointmentsRef = ref(db, 'users');
@@ -35,7 +38,7 @@ const Appointment = () => {
       const data = snapshot.val();
       if (data) {
         const appointmentsArray = Object.values(data)
-          .filter(appointment => appointment && appointment.name)
+          .filter(appointment => appointment && appointment.name1)
           .sort((a, b) => {
             const dateA = new Date(a.date + 'T' + a.time);
             const dateB = new Date(b.date + 'T' + b.time);
@@ -93,9 +96,14 @@ const Appointment = () => {
     setModalVisible(true);
   };
 
-  const handleCompleteButtonPress = async () => {
-    if (selectedAppointment && selectedAppointment.name) {
-      const appointmentRef = ref(db, `users/${selectedAppointment.name}`);
+  const handleDeleteDataViewBoxDoubleClick = appointment => {
+    setDeletedAppointment(appointment);
+    setModalVisible1(true);
+  };
+
+  const appointmentStatusChangeButton = async () => {
+    if (selectedAppointment && selectedAppointment.name1) {
+      const appointmentRef = ref(db, `users/${selectedAppointment.name1}`);
 
       try {
         // Fetch the current 'check' value from the database
@@ -122,9 +130,60 @@ const Appointment = () => {
     }
   };
 
+  const appointmentDeleteButton = async () => {
+    if (deletedAppointment && deletedAppointment.name1) {
+      const appointmentRef = ref(db, `users/${deletedAppointment.name1}`);
+
+      try {
+        // Remove the entire user data from the database
+        await remove(appointmentRef);
+        // console.log('User data removed!', appointmentRef);
+
+        // Close the modal after removing the data
+        closeModal2();
+
+        // Fetch updated data from the database
+        const appointmentsRef = ref(db, 'users');
+        const snapshot = await get(appointmentsRef);
+        const data = snapshot.val();
+
+        if (data) {
+          const appointmentsArray = Object.values(data)
+            .filter(appointment => appointment && appointment.name1)
+            .sort((a, b) => {
+              const dateA = new Date(a.date + 'T' + a.time);
+              const dateB = new Date(b.date + 'T' + b.time);
+
+              return dateA - dateB;
+            });
+
+          // Update the state with the new data
+          setAppointments(appointmentsArray);
+
+          // Filter appointments for the selected date again
+          filterAppointmentsForToday(appointmentsArray);
+        }
+      } catch (error) {
+        // Handle errors appropriately
+        console.error('Error removing user data:', error.message);
+      }
+    } else {
+      // Handle the case where deletedAppointment or its id is undefined
+      console.error(
+        'Selected appointment or its id is undefined:',
+        deletedAppointment,
+      );
+    }
+  };
+
   const closeModal = () => {
     setSelectedAppointment(null);
     setModalVisible(false);
+  };
+
+  const closeModal2 = () => {
+    setDeletedAppointment(null);
+    setModalVisible1(false);
   };
 
   return (
@@ -158,11 +217,21 @@ const Appointment = () => {
               <TouchableOpacity
                 key={index}
                 style={styles.view3}
-                onPress={() => handleDataViewBoxDoubleClick(appointment)}>
+                onPress={() => handleDataViewBoxDoubleClick(appointment)}
+                onLongPress={() =>
+                  handleDeleteDataViewBoxDoubleClick(appointment)
+                }>
                 <View style={styles.view3_1}>
                   <Text style={styles.text2}>{appointment.name}</Text>
                   <Text style={styles.text2_1}>
-                    {appointment.date} {appointment.time}
+                    <Text>{appointment.date} </Text> |{' '}
+                    <Text
+                      style={{
+                        color: '#00b3ff',
+                        fontFamily: 'Poppins-SemiBold',
+                      }}>
+                      {appointment.time}
+                    </Text>
                   </Text>
                   <Text style={styles.text2_2}>{appointment.description}</Text>
                 </View>
@@ -170,7 +239,7 @@ const Appointment = () => {
                   <Icon
                     name="progress-clock"
                     type="material-community"
-                    color={appointment.check === '0' ? 'red' : '#d0d0d1'}
+                    color={appointment.check === '0' ? '#ff401e' : '#d0d0d1'}
                     size={39}
                   />
                 </View>
@@ -208,6 +277,7 @@ const Appointment = () => {
                   </View>
                   <View style={styles.modalContent1}>
                     {/* Your card content here */}
+                    <Text style={styles.deleteTxt}>Appointment ?</Text>
                     <Text style={styles.cardtxt_1}>
                       {selectedAppointment.name}
                     </Text>
@@ -215,10 +285,68 @@ const Appointment = () => {
                       {selectedAppointment.date} {selectedAppointment.time}
                     </Text>
                     <TouchableHighlight
-                      style={styles.completebtn}
-                      onPress={handleCompleteButtonPress} // Call the new function here
-                    >
-                      <Text style={styles.completebtntxt}>Completed </Text>
+                      style={[
+                        styles.completebtn,
+                        {
+                          backgroundColor:
+                            selectedAppointment &&
+                            selectedAppointment.check === '1'
+                              ? '#2889EB'
+                              : 'red',
+                        },
+                      ]}
+                      underlayColor={
+                        selectedAppointment && selectedAppointment.check === '0'
+                          ? '#f69c9d'
+                          : '#b7d8f8'
+                      }
+                      onPress={appointmentStatusChangeButton}>
+                      <Text style={styles.completebtntxt}>
+                        {selectedAppointment &&
+                        selectedAppointment.check === '1'
+                          ? 'Completed'
+                          : 'Uncompleted'}
+                      </Text>
+                    </TouchableHighlight>
+                  </View>
+                </>
+              )}
+            </View>
+          </View>
+        </Modal>
+
+        {/* Show Delete AppointmentDetailsCard if an appointment is selected */}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible1}
+          onRequestClose={closeModal2}>
+          <View style={styles.modalBackground2}>
+            <View style={styles.modalContent2}>
+              {deletedAppointment && (
+                <>
+                  {/* Close button */}
+                  <View style={styles.closebtnview}>
+                    <TouchableHighlight
+                      style={styles.closebtn}
+                      onPress={closeModal2}>
+                      <Text style={styles.closebtntxt}>X</Text>
+                    </TouchableHighlight>
+                  </View>
+                  <View style={styles.modalContent1}>
+                    {/* Your card content here */}
+                    <Text style={styles.deleteTxt}>Are you sure?</Text>
+                    <Text style={styles.cardtxt_1}>
+                      {deletedAppointment.name}
+                    </Text>
+                    <Text style={styles.cardtxt_2}>
+                      {deletedAppointment.date} {deletedAppointment.time}
+                    </Text>
+                    <TouchableHighlight
+                      style={styles.completebtn2}
+                      underlayColor={'#ff9498'}
+                      onPress={appointmentDeleteButton}>
+                      <Text style={styles.completebtntxt2}>Delete</Text>
                     </TouchableHighlight>
                   </View>
                 </>
@@ -262,7 +390,7 @@ const styles = StyleSheet.create({
 
   view2: {
     flex: 1,
-    marginTop: 15,
+    marginTop: 1,
   },
 
   view3_1: {
@@ -326,7 +454,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 
-  // Modal styles
+  // Modal1 styles
   modalBackground: {
     flex: 1,
     justifyContent: 'center',
@@ -368,6 +496,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: '#ffffff',
     textAlign: 'center',
+    fontWeight: 'bold',
   },
 
   closebtn: {
@@ -398,5 +527,45 @@ const styles = StyleSheet.create({
     fontSize: hp(2),
     fontFamily: 'Poppins-light',
     marginBottom: 20,
+  },
+
+  // Modalw styles
+  modalBackground2: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  },
+
+  modalContent2: {
+    backgroundColor: '#ffffff',
+    width: wp(70),
+    height: hp(30),
+    padding: 0,
+    borderRadius: 10,
+    elevation: 5,
+  },
+
+  deleteTxt: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: '#515151',
+  },
+
+  completebtn2: {
+    width: 200,
+    height: 40,
+    marginTop: 10,
+    backgroundColor: '#ff3f58',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+
+  completebtntxt2: {
+    fontSize: 18,
+    color: '#ffffff',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });
