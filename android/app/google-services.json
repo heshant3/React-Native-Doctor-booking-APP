@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "230078794220",
+    "project_id": "methapp-2",
+    "storage_bucket": "methapp-2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:230078794220:android:b4015fd9eb15f88a5298c9",
+        "android_client_info": {
+          "package_name": "com.awesomeproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4a9F06gMPrBfXU2siV030de7q80Igl-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
