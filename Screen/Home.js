@@ -172,10 +172,11 @@ const styles = StyleSheet.create({
 
   image: {
     marginTop: 20,
-    width: '110%',
-    height: 100,
+    width: wp(95),
+    height: hp(16),
     resizeMode: 'contain',
     alignSelf: 'center',
     overflow: 'hidden',
+    borderRadius: 45,
   },
 });
