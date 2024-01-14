@@ -10,9 +10,9 @@ import {Button} from '@rneui/themed';
 import {ref, push, set} from 'firebase/database';
 import {db} from '../config';
 
+
 const Book = () => {
   const [date, setDate] = useState(new Date());
-  const [name1, setname1] = useState('');
   const [name, setname] = useState('');
   const [description, setdescription] = useState('');
 
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginLeft: 20,
     color: '#515151',
-    fontSize: hp(4),
+    fontSize: wp(6.5),
     fontFamily: 'Poppins-SemiBold',
     // fontWeight: 'bold',
   },
@@ -161,11 +161,11 @@ const styles = StyleSheet.create({
     // fontWeight: 'bold',
   },
   btn: {
-    marginTop: 90,
+    marginTop: hp(3),
     alignSelf: 'center',
     justifyContent: 'center',
-    width: 350,
-    height: 60,
+    width: wp(70),
+    height: hp(8),
     backgroundColor: '#2889EB',
     borderColor: 'transparent',
     borderWidth: 10,

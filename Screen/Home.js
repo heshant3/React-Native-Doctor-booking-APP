@@ -47,7 +47,7 @@ const Home = () => {
           style={styles.image}
         />
       </View>
-      <View style={[styles.view2, {marginBottom: 10}]}>
+      <View style={styles.view2}>
         <Text style={styles.text1}>Appointments</Text>
         <View style={styles.view3}>
           <View style={styles.view3_1}>
@@ -84,6 +84,7 @@ export default Home;
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#ffffff',
     flex: 1,
   },
   view1: {
@@ -135,15 +136,15 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginLeft: 20,
     color: '#515151',
-    fontSize: hp(4),
+    fontSize: wp(6.5),
     fontFamily: 'Poppins-SemiBold',
   },
 
   text1: {
-    marginTop: 30,
+    marginTop: hp(3),
     marginLeft: 20,
     color: '#515151',
-    fontSize: hp(3.8),
+    fontSize: hp(3),
     fontFamily: 'Poppins-SemiBold',
   },
 
@@ -171,12 +172,12 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    marginTop: 20,
-    width: wp(95),
-    height: hp(16),
+    marginTop: -hp(6.6),
+    width: '70%',
+    width: '70%',
     resizeMode: 'contain',
     alignSelf: 'center',
     overflow: 'hidden',
-    borderRadius: 45,
+    // borderRadius: 300,
   },
 });

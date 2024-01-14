@@ -19,6 +19,11 @@ import {Icon} from '@rneui/themed';
 import {ref, onValue, update, get, remove} from 'firebase/database';
 import {db} from '../config';
 import DatePicker from 'react-native-date-picker';
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+} from 'react-native-responsive-dimensions';
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -406,7 +411,7 @@ const styles = StyleSheet.create({
   text: {
     marginLeft: 20,
     color: '#515151',
-    fontSize: hp(4),
+    fontSize: wp(6.5),
     fontFamily: 'Poppins-SemiBold',
   },
 
@@ -414,7 +419,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 30,
     width: wp(90),
-    height: hp(13),
+    height: wp(25),
     justifyContent: 'center',
     alignItems: 'left',
     alignSelf: 'center',
@@ -428,7 +433,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginLeft: 20,
     color: '#515151',
-    fontSize: hp(3.8),
+    fontSize: wp(6),
     fontFamily: 'Poppins-Medium',
   },
 
@@ -436,7 +441,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginLeft: 20,
     color: '#515151',
-    fontSize: hp(2.3),
+    fontSize: wp(4),
     fontFamily: 'Poppins-Light',
   },
 
@@ -444,7 +449,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginLeft: 20,
     color: '#515151',
-    fontSize: hp(2),
+    fontSize: wp(3),
     fontFamily: 'Poppins-Light',
   },
 
@@ -464,8 +469,8 @@ const styles = StyleSheet.create({
 
   modalContent: {
     backgroundColor: '#ffffff',
-    width: wp(70),
-    height: hp(30),
+    width: responsiveWidth(70),
+    height: responsiveWidth(57),
     padding: 0,
     borderRadius: 10,
     elevation: 5,
@@ -483,9 +488,8 @@ const styles = StyleSheet.create({
   },
 
   completebtn: {
-    width: 200,
-    height: 40,
-    marginTop: 10,
+    width: responsiveWidth(30),
+    height: responsiveWidth(9),
     backgroundColor: '#2889EB',
     padding: 10,
     borderRadius: 5,
@@ -493,7 +497,7 @@ const styles = StyleSheet.create({
   },
 
   completebtntxt: {
-    fontSize: 17,
+    fontSize: wp(3.6),
     color: '#ffffff',
     textAlign: 'center',
     fontWeight: 'bold',
@@ -516,9 +520,9 @@ const styles = StyleSheet.create({
   },
 
   cardtxt_1: {
-    marginTop: 20,
+    marginTop: wp(3),
     color: '#515151',
-    fontSize: hp(4),
+    fontSize: wp(7),
     fontFamily: 'Poppins-bold',
     marginBottom: 7,
   },
@@ -539,31 +543,30 @@ const styles = StyleSheet.create({
 
   modalContent2: {
     backgroundColor: '#ffffff',
-    width: wp(70),
-    height: hp(30),
+    width: responsiveWidth(70),
+    height: responsiveWidth(57),
     padding: 0,
     borderRadius: 10,
     elevation: 5,
   },
 
   deleteTxt: {
-    fontSize: 25,
+    fontSize: wp(6),
     fontWeight: 'bold',
     color: '#515151',
   },
 
   completebtn2: {
-    width: 200,
-    height: 40,
-    marginTop: 10,
+    width: responsiveWidth(30),
+    height: responsiveWidth(9),
     backgroundColor: '#ff3f58',
-    padding: 10,
+    justifyContent: 'center',
     borderRadius: 5,
     alignItems: 'center',
   },
 
   completebtntxt2: {
-    fontSize: 18,
+    fontSize: wp(3.7),
     color: '#ffffff',
     textAlign: 'center',
     fontWeight: 'bold',
