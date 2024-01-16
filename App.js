@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text} from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-
 import Navigator from './Navigator';
 import No_internet from './No_internet';
+import Loggingfuntion from './loggingfuntion';
 
 const App = () => {
   const [isConnected, setIsConnected] = useState(true);
@@ -20,7 +20,7 @@ const App = () => {
 
   return isConnected ? (
     // Your normal app content goes here
-    <Navigator />
+    <Loggingfuntion />
   ) : (
     // Display a message when not connected
     <No_internet />

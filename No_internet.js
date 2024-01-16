@@ -34,5 +34,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: responsiveFontSize(1.5),
     fontFamily: 'Poppins-SemiBold',
+    color: '#515151',
   },
 });

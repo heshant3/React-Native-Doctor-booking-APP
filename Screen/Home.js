@@ -1,21 +1,42 @@
-import {StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native';
+import {StyleSheet, Text, View, ActivityIndicator, Switch} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {ref, onValue} from 'firebase/database';
+import {ref, onValue, update} from 'firebase/database';
 import {db} from '../config';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+  responsiveWidth,
+} from 'react-native-responsive-dimensions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = () => {
   const [todayAppointments, setTodayAppointments] = useState(0);
   const [tomorrowAppointments, setTomorrowAppointments] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [sessionActive, setSessionActive] = useState(false);
 
   useEffect(() => {
-    const appointmentsRef = ref(db, 'users');
+    // Load session status from AsyncStorage on component mount
+    const loadSessionStatus = async () => {
+      try {
+        const storedSessionStatus = await AsyncStorage.getItem('sessionStatus');
+        if (storedSessionStatus !== null) {
+          setSessionActive(storedSessionStatus === 'active');
+        }
+      } catch (error) {
+        // console.error('Error loading session status from AsyncStorage:', error);
+      }
+    };
 
+    loadSessionStatus();
+
+    // Firebase listener for appointments
+    const appointmentsRef = ref(db, 'users');
     onValue(appointmentsRef, snapshot => {
       const data = snapshot.val();
       if (data) {
@@ -38,14 +59,49 @@ const Home = () => {
     });
   }, []);
 
+  const toggleSession = async () => {
+    try {
+      // Update the Firebase Realtime Database with the new session state
+      const updates = {};
+      updates['/sessionStatus'] = sessionActive ? 'inactive' : 'active';
+      update(ref(db, 'Doctor '), updates);
+
+      // Save the session status to AsyncStorage
+      await AsyncStorage.setItem(
+        'sessionStatus',
+        sessionActive ? 'inactive' : 'active',
+      );
+
+      // Toggle the local state
+      setSessionActive(previousState => !previousState);
+    } catch (error) {
+      console.error('Error toggling session status:', error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.view1}>
         <Text style={styles.text}>Welcome Doctor</Text>
-        <Image
-          source={require('../assets/images/banner-1.png')}
-          style={styles.image}
-        />
+        <View style={styles.view10}>
+          <View style={styles.view10_1}>
+            <Text
+              style={[styles.text_3, {color: sessionActive ? 'red' : 'grey'}]}>
+              Session is {sessionActive ? 'active' : 'inactive'}
+            </Text>
+          </View>
+          <View style={styles.view10_2}>
+            <Switch
+              thumbColor={sessionActive ? 'white' : 'white'}
+              trackColor={{false: 'grey', true: 'tomato'}}
+              ios_backgroundColor="grey"
+              value={sessionActive}
+              onValueChange={() => {
+                toggleSession();
+              }}
+            />
+          </View>
+        </View>
       </View>
       <View style={styles.view2}>
         <Text style={styles.text1}>Appointments</Text>
@@ -61,8 +117,6 @@ const Home = () => {
             )}
           </View>
         </View>
-      </View>
-      <View style={styles.view2}>
         <View style={styles.view9}>
           <View style={styles.view3_1}>
             <Text style={styles.text2}>Tomorrow </Text>
@@ -91,7 +145,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   view2: {
-    flex: 1,
+    // backgroundColor: 'red',
+    flex: 2,
   },
 
   view3: {
@@ -109,9 +164,22 @@ const styles = StyleSheet.create({
 
   view9: {
     flexDirection: 'row',
-    marginTop: 6,
+    marginTop: 30,
     width: wp(90),
     height: hp(13),
+    justifyContent: 'center',
+    alignItems: 'left',
+    alignSelf: 'center',
+    borderWidth: 0.5,
+    borderRadius: 10,
+    borderColor: '#515151',
+  },
+
+  view10: {
+    marginTop: responsiveHeight(4),
+    flexDirection: 'row',
+    width: responsiveWidth(90),
+    height: responsiveHeight(10),
     justifyContent: 'center',
     alignItems: 'left',
     alignSelf: 'center',
@@ -124,6 +192,27 @@ const styles = StyleSheet.create({
     flex: 3,
     justifyContent: 'center',
     alignItems: 'left',
+  },
+
+  view10_2: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+
+  view10_1: {
+    flex: 3,
+    justifyContent: 'center',
+    alignItems: 'left',
+  },
+
+  text_3: {
+    textAlign: 'left',
+    marginLeft: 20,
+    color: '#515151',
+    fontSize: responsiveFontSize(2),
+    fontFamily: 'Poppins-Light',
   },
 
   view3_2: {
@@ -171,13 +260,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Light',
   },
 
-  image: {
-    marginTop: -hp(6.6),
-    width: '70%',
-    width: '70%',
-    resizeMode: 'contain',
-    alignSelf: 'center',
-    overflow: 'hidden',
-    // borderRadius: 300,
+  imgview: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: responsiveHeight(20),
   },
 });

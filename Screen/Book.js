@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, TextInput, Vibration} from 'react-native';
+import {StyleSheet, Text, View, TextInput, ScrollView} from 'react-native';
 import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
@@ -9,7 +9,6 @@ import DatePicker from 'react-native-date-picker';
 import {Button} from '@rneui/themed';
 import {ref, push, set} from 'firebase/database';
 import {db} from '../config';
-
 
 const Book = () => {
   const [date, setDate] = useState(new Date());
@@ -33,7 +32,6 @@ const Book = () => {
       check: '1',
     })
       .then(() => {
-        Vibration.vibrate(100);
         setname('');
         setdescription('');
         setDate(new Date());
@@ -44,7 +42,6 @@ const Book = () => {
   }
 
   const onDateChange = newDate => {
-    Vibration.vibrate(50);
     setDate(newDate);
   };
 
@@ -54,43 +51,45 @@ const Book = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.view1}>
         <Text style={styles.text}>Booking Appointment</Text>
-        <View style={styles.view2}>
-          <TextInput
-            value={name}
-            onChangeText={name => {
-              setname(name);
-            }}
-            placeholder="Name"
-            placeholderTextColor="#BDBDBD"
-            style={styles.name}
-          />
-          <TextInput
-            value={description}
-            onChangeText={description => {
-              setdescription(description);
-            }}
-            placeholder="Describe"
-            placeholderTextColor="#BDBDBD"
-            style={styles.description}
-          />
-          <Text style={styles.text1}> Date & Time</Text>
-          <DatePicker
-            timeZoneOffsetInMinutes={0}
-            textColor="#000"
-            backgroundColor="#ffffff"
-            alignSelf="center"
-            date={date}
-            onDateChange={onDateChange}
-            mode="datetime"
-          />
-          <Button
-            onPress={create}
-            title="Book Now"
-            titleStyle={styles.btntitle}
-            buttonStyle={styles.btn}
-            disabled={isButtonDisabled}
-          />
-        </View>
+        <ScrollView>
+          <View style={styles.view2}>
+            <TextInput
+              value={name}
+              onChangeText={name => {
+                setname(name);
+              }}
+              placeholder="Name"
+              placeholderTextColor="#BDBDBD"
+              style={styles.name}
+            />
+            <TextInput
+              value={description}
+              onChangeText={description => {
+                setdescription(description);
+              }}
+              placeholder="Describe"
+              placeholderTextColor="#BDBDBD"
+              style={styles.description}
+            />
+            <Text style={styles.text1}> Date & Time</Text>
+            <DatePicker
+              timeZoneOffsetInMinutes={0}
+              textColor="#000"
+              backgroundColor="#ffffff"
+              alignSelf="center"
+              date={date}
+              onDateChange={onDateChange}
+              mode="datetime"
+            />
+            <Button
+              onPress={create}
+              title="Book Now"
+              titleStyle={styles.btntitle}
+              buttonStyle={styles.btn}
+              disabled={isButtonDisabled}
+            />
+          </View>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );

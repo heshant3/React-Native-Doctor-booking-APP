@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Modal,
   TouchableHighlight,
-  Vibration,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
@@ -170,7 +169,7 @@ const Appointment = () => {
         }
       } catch (error) {
         // Handle errors appropriately
-        console.error('Error removing user data:', error.message);
+        // console.error('Error removing user data:', error.message);
       }
     } else {
       // Handle the case where deletedAppointment or its id is undefined
@@ -488,8 +487,9 @@ const styles = StyleSheet.create({
   },
 
   completebtn: {
+    justifyContent: 'center',
     width: responsiveWidth(30),
-    height: responsiveWidth(9),
+    height: responsiveWidth(9.5),
     backgroundColor: '#2889EB',
     padding: 10,
     borderRadius: 5,
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
 
   completebtn2: {
     width: responsiveWidth(30),
-    height: responsiveWidth(9),
+    height: responsiveWidth(9.5),
     backgroundColor: '#ff3f58',
     justifyContent: 'center',
     borderRadius: 5,
