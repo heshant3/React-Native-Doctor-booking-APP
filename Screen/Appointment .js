@@ -234,9 +234,16 @@ const Appointment = () => {
                         color: '#00b3ff',
                         fontFamily: 'Poppins-SemiBold',
                       }}>
-                      {appointment.time}
+                      {new Date(
+                        `${appointment.date} ${appointment.time}`,
+                      ).toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true,
+                      })}
                     </Text>
                   </Text>
+
                   <Text style={styles.text2_2}>{appointment.description}</Text>
                 </View>
                 <View style={styles.view3_2}>
@@ -286,8 +293,16 @@ const Appointment = () => {
                       {selectedAppointment.name}
                     </Text>
                     <Text style={styles.cardtxt_2}>
-                      {selectedAppointment.date} {selectedAppointment.time}
+                      {selectedAppointment.date} |{' '}
+                      {new Date(
+                        `${selectedAppointment.date} ${selectedAppointment.time}`,
+                      ).toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true,
+                      })}
                     </Text>
+
                     <TouchableHighlight
                       style={[
                         styles.completebtn,
@@ -344,8 +359,16 @@ const Appointment = () => {
                       {deletedAppointment.name}
                     </Text>
                     <Text style={styles.cardtxt_2}>
-                      {deletedAppointment.date} {deletedAppointment.time}
+                      {deletedAppointment.date} |{' '}
+                      {new Date(
+                        `${deletedAppointment.date} ${deletedAppointment.time}`,
+                      ).toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true,
+                      })}
                     </Text>
+
                     <TouchableHighlight
                       style={styles.completebtn2}
                       underlayColor={'#ff9498'}

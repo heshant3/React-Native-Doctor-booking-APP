@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -17,44 +17,19 @@ import {
 const LoginScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    checkLoginStatus();
-  }, []);
-
-  const checkLoginStatus = async () => {
-    try {
-      const storedLoginStatus = await AsyncStorage.getItem('isLoggedIn');
-      if (storedLoginStatus && JSON.parse(storedLoginStatus)) {
-        navigation.replace('Book');
-      }
-    } catch (error) {
-      //   console.error('Error reading login status from AsyncStorage:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleLogin = async () => {
-    const hardcodedUsername = '123';
-    const hardcodedPassword = '123';
+    // Implement your actual login logic here
+    if (username === '1' && password === '1') {
+      // Save login status in AsyncStorage
+      await AsyncStorage.setItem('hasLoggedIn', 'true');
 
-    if (username === hardcodedUsername && password === hardcodedPassword) {
-      try {
-        await AsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
-        navigation.replace('Book');
-      } catch (error) {
-        // console.error('Error saving login status to AsyncStorage:', error);
-      }
+      // Navigate to the 'Book' screen
+      navigation.replace('Book');
     } else {
-      alert('Invalid username or password');
+      Alert.alert('Invalid username or password');
     }
   };
-
-  if (isLoading) {
-    return null; // or a loading indicator if you prefer
-  }
 
   return (
     <View style={styles.container}>

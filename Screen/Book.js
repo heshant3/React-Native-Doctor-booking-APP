@@ -1,4 +1,11 @@
-import {StyleSheet, Text, View, TextInput, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
@@ -35,9 +42,10 @@ const Book = () => {
         setname('');
         setdescription('');
         setDate(new Date());
+        Alert.alert('Booking is complete');
       })
       .catch(error => {
-        console.error('Error writing document: ', error);
+        // console.error('Error writing document: ', error);
       });
   }
 
