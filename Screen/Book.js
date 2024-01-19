@@ -5,6 +5,7 @@ import {
   TextInput,
   ScrollView,
   Alert,
+  TouchableHighlight,
 } from 'react-native';
 import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -16,16 +17,31 @@ import DatePicker from 'react-native-date-picker';
 import {Button} from '@rneui/themed';
 import {ref, push, set} from 'firebase/database';
 import {db} from '../config';
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+} from 'react-native-responsive-dimensions';
 
 const Book = () => {
   const [date, setDate] = useState(new Date());
   const [name, setname] = useState('');
   const [description, setdescription] = useState('');
 
+  const [isPopupVisible, setPopupVisible] = useState(false);
+
   async function create() {
-    const dateString = date.toISOString();
-    const dateOnly = dateString.split('T')[0];
-    const timeOnly = dateString.split('T')[1].substring(0, 8);
+    // Show the popup card
+    setPopupVisible(true);
+  }
+
+  const submitDataToDatabase = () => {
+    const dateOnly = date.toISOString().split('T')[0];
+    const timeOnly = date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false,
+    });
 
     // Use push to automatically generate a unique numerical ID
     const newAppointmentRef = push(ref(db, 'users'));
@@ -45,15 +61,28 @@ const Book = () => {
         Alert.alert('Booking is complete');
       })
       .catch(error => {
-        // console.error('Error writing document: ', error);
+        console.error('Error writing document: ', error);
       });
-  }
+  };
 
   const onDateChange = newDate => {
     setDate(newDate);
   };
 
   const isButtonDisabled = !name;
+
+  const handleOkPress = () => {
+    // Submit data to the database
+    submitDataToDatabase();
+
+    // Close the popup card
+    setPopupVisible(false);
+  };
+
+  const handleCancelPress = () => {
+    // Close the popup card without submitting data
+    setPopupVisible(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,7 +110,6 @@ const Book = () => {
             />
             <Text style={styles.text1}> Date & Time</Text>
             <DatePicker
-              timeZoneOffsetInMinutes={0}
               textColor="#000"
               backgroundColor="#ffffff"
               alignSelf="center"
@@ -99,6 +127,37 @@ const Book = () => {
           </View>
         </ScrollView>
       </View>
+
+      {isPopupVisible && (
+        <View style={styles.popup}>
+          <View style={styles.popupCard}>
+            <View style={styles.closebtnview}>
+              <TouchableHighlight
+                underlayColor={'#ff9498'}
+                onPress={handleCancelPress}
+                style={styles.closebtn}>
+                <Text style={styles.closebtntxt}>X</Text>
+              </TouchableHighlight>
+            </View>
+            <Text style={styles.popupText}>Review your booking:</Text>
+            <Text style={styles.popupText1}>{name}</Text>
+            <Text style={styles.popupText2}>
+              {date.toLocaleDateString()} |{' '}
+              {date.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+              })}
+            </Text>
+            <TouchableHighlight
+              onPress={handleOkPress}
+              underlayColor={'#b7d8f8'}
+              style={styles.btn1}>
+              <Text style={styles.btntitle1}>Confirm</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -113,7 +172,6 @@ const styles = StyleSheet.create({
 
   view1: {
     flex: 1,
-    // backgroundColor: 'red',
   },
 
   view2: {
@@ -127,7 +185,6 @@ const styles = StyleSheet.create({
     color: '#515151',
     fontSize: wp(6.5),
     fontFamily: 'Poppins-SemiBold',
-    // fontWeight: 'bold',
   },
 
   text1: {
@@ -136,8 +193,6 @@ const styles = StyleSheet.create({
     color: '#515151',
     fontSize: hp(3),
     fontFamily: 'Poppins-Medium',
-
-    // fontWeight: 'bold',
   },
 
   name: {
@@ -150,7 +205,6 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 15,
-    // fontWeight: 'bold',
   },
 
   description: {
@@ -165,8 +219,8 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 15,
-    // fontWeight: 'bold',
   },
+
   btn: {
     marginTop: hp(3),
     alignSelf: 'center',
@@ -183,5 +237,90 @@ const styles = StyleSheet.create({
 
   btntitle: {
     fontSize: 25,
+  },
+
+  popup: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  },
+
+  popupCard: {
+    backgroundColor: '#ffffff',
+    width: responsiveWidth(70),
+    height: responsiveWidth(57),
+    padding: 0,
+    borderRadius: 10,
+    elevation: 5,
+  },
+
+  popupText: {
+    alignSelf: 'center',
+    color: '#515151',
+    fontSize: responsiveFontSize(2.2),
+    fontFamily: 'Poppins-light',
+    marginBottom: 20,
+  },
+
+  popupText1: {
+    alignSelf: 'center',
+    color: '#515151',
+    fontSize: responsiveFontSize(3.5),
+    fontFamily: 'Poppins-light',
+    marginBottom: 7,
+  },
+
+  popupText2: {
+    alignSelf: 'center',
+    color: '#515151',
+    fontSize: responsiveFontSize(2.1),
+    fontFamily: 'Poppins-light',
+  },
+
+  btn1: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    width: responsiveWidth(40),
+    height: responsiveWidth(10),
+    backgroundColor: '#2889EB',
+    borderColor: 'transparent',
+    borderRadius: 10,
+    paddingVertical: 5,
+    fontSize: 42,
+    marginTop: 30,
+    marginBottom: 20,
+  },
+
+  btntitle1: {
+    alignSelf: 'center',
+    fontSize: responsiveFontSize(2),
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+
+  closebtn: {
+    marginTop: 10,
+    backgroundColor: '#e44c41',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 27,
+    width: 27,
+    borderRadius: 50,
+  },
+
+  closebtntxt: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+
+  closebtnview: {
+    paddingRight: 10,
+    alignItems: 'flex-end',
   },
 });

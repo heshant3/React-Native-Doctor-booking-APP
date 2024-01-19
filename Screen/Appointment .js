@@ -226,25 +226,40 @@ const Appointment = () => {
                   handleDeleteDataViewBoxDoubleClick(appointment)
                 }>
                 <View style={styles.view3_1}>
-                  <Text style={styles.text2}>{appointment.name}</Text>
-                  <Text style={styles.text2_1}>
-                    <Text>{appointment.date} </Text> |{' '}
-                    <Text
-                      style={{
-                        color: '#00b3ff',
-                        fontFamily: 'Poppins-SemiBold',
-                      }}>
-                      {new Date(
-                        `${appointment.date} ${appointment.time}`,
-                      ).toLocaleTimeString('en-US', {
-                        hour: 'numeric',
-                        minute: 'numeric',
-                        hour12: true,
-                      })}
+                  <View style={styles.view3_11}>
+                    <View style={styles.view3_10}></View>
+                  </View>
+                  <View style={styles.view3_12}>
+                    <Text style={styles.text2}>{appointment.name}</Text>
+                    <Text style={styles.text2_2}>
+                      {appointment.description}
                     </Text>
-                  </Text>
 
-                  <Text style={styles.text2_2}>{appointment.description}</Text>
+                    <Text style={styles.text2_1}>
+                      <Text
+                        style={{
+                          color: '#777777',
+                          fontFamily: 'Poppins-SemiBold',
+                        }}>
+                        {appointment.date}
+                        {'  '}
+                      </Text>
+                      {''}|{'  '}
+                      <Text
+                        style={{
+                          color: '#515151',
+                          fontFamily: 'Poppins-SemiBold',
+                        }}>
+                        {new Date(
+                          `${appointment.date} ${appointment.time}`,
+                        ).toLocaleTimeString('en-US', {
+                          hour: 'numeric',
+                          minute: 'numeric',
+                          hour12: true,
+                        })}
+                      </Text>
+                    </Text>
+                  </View>
                 </View>
                 <View style={styles.view3_2}>
                   <Icon
@@ -390,7 +405,7 @@ export default Appointment;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f5f5f5',
     flex: 1,
   },
 
@@ -423,11 +438,37 @@ const styles = StyleSheet.create({
   view3_1: {
     flex: 3,
     justifyContent: 'center',
+    flexDirection: 'row',
+  },
+
+  view3_11: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+
+  view3_10: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '10%',
+    height: '60%',
+    backgroundColor: '#318bd3',
+    borderRadius: 15,
+  },
+
+  view3_12: {
+    justifyContent: 'center',
+    flex: 9,
   },
 
   view3_2: {
     flex: 1,
     justifyContent: 'center',
+  },
+
+  view4: {
+    flex: 1,
+    justifyContent: 'center',
+    // backgroundColor: 'red',
   },
 
   text: {
@@ -439,21 +480,21 @@ const styles = StyleSheet.create({
 
   view3: {
     flexDirection: 'row',
-    marginTop: 30,
+    marginTop: 10,
+    marginBottom: 15,
     width: wp(90),
     height: wp(25),
     justifyContent: 'center',
     alignItems: 'left',
     alignSelf: 'center',
-    borderWidth: 0.5,
-    borderRadius: 10,
-    borderColor: '#515151',
-    borderBottomWidth: 1,
+    borderRadius: 15,
+    backgroundColor: '#ffffff',
+    elevation: 10,
   },
 
   text2: {
     textAlign: 'left',
-    marginLeft: 20,
+    // marginLeft: 0,
     color: '#515151',
     fontSize: wp(6),
     fontFamily: 'Poppins-Medium',
@@ -461,15 +502,15 @@ const styles = StyleSheet.create({
 
   text2_1: {
     textAlign: 'left',
-    marginLeft: 20,
-    color: '#515151',
+    // marginLeft: 20,
+    color: 'red',
     fontSize: wp(4),
     fontFamily: 'Poppins-Light',
   },
 
   text2_2: {
     textAlign: 'left',
-    marginLeft: 20,
+    // marginLeft: 20,
     color: '#515151',
     fontSize: wp(3),
     fontFamily: 'Poppins-Light',

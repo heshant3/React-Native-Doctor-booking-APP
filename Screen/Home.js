@@ -40,8 +40,15 @@ const Home = () => {
     onValue(appointmentsRef, snapshot => {
       const data = snapshot.val();
       if (data) {
-        const today = new Date().toISOString().split('T')[0];
-        const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
+        const currentDate = new Date();
+        const futureDate = new Date(currentDate);
+        futureDate.setHours(
+          currentDate.getHours() + 5,
+          currentDate.getMinutes() + 30,
+        );
+
+        const today = new Date(futureDate).toISOString().split('T')[0];
+        const tomorrow = new Date(futureDate.getTime() + 24 * 60 * 60 * 1000)
           .toISOString()
           .split('T')[0];
 
@@ -75,7 +82,7 @@ const Home = () => {
       // Toggle the local state
       setSessionActive(previousState => !previousState);
     } catch (error) {
-      console.error('Error toggling session status:', error);
+      // console.error('Error toggling session status:', error);
     }
   };
 
@@ -211,7 +218,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginLeft: 20,
     color: '#515151',
-    fontSize: responsiveFontSize(2),
+    fontSize: responsiveFontSize(3),
     fontFamily: 'Poppins-Light',
   },
 
